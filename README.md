@@ -39,29 +39,29 @@ Below are stats comparing Christians simple-multi-sig with it's Yul implemented 
 
 #### Contract Size (bytes):
 
-Christian   2301 bytes
+Christian:   2301 bytes
 
-Nick        311 bytes
+Nick:        ***311 bytes***
 
 #### Opcodes Used:
 
-Christian   1926 opcodes
+Christian:   1926 opcodes
 
-Nick        233 opcodes
+Nick:        ***233 opcodes***
 
 #### Deployment Cost (using 2 Signatories):
 
 Christian:
 
- transaction cost 	656197 gas
+ transaction cost: 	656197 gas
 
- execution cost 	454473 gas
+ execution cost: 	454473 gas
 
 Nick:
 
- transaction cost 	190592 gas
+ transaction cost: 	***190592 gas***
 
- execution cost 	144616 gas
+ execution cost: 	***144616 gas***
 
 ## Reference Implimentation (Solidity)
 
@@ -258,6 +258,12 @@ if (typeof window.web3 !== "undefined") {
   });
 }
 ```
+
+## TODO
+
+- Write many more tests
+- Formal Verification of Assembly
+- Adjust memory positions for optimal memory usage (during execution)
 
 ## LICENCE
 
