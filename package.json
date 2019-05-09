@@ -1,0 +1,35 @@
+{
+  "name": "multisignaturewallet",
+  "version": "1.0.0",
+  "description": "311 byte EIP712 Signing Compliant Delegate-Call Enabled MultiSignature Wallet for the Ethereum Virtual Machine",
+  "main": "scripts/build.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "testeth ./tests/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SilentCicero/multisignaturewallet.git"
+  },
+  "keywords": [
+    "yul",
+    "multi",
+    "signature",
+    "wallet",
+    "ethereum",
+    "solidity",
+    "web3"
+  ],
+  "author": "Nick Dodson <thenickdodson@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/SilentCicero/multisignaturewallet/issues"
+  },
+  "homepage": "https://github.com/SilentCicero/multisignaturewallet#readme",
+  "devDependencies": {
+    "solc": "^0.5.8",
+    "testeth": "^0.1.1"
+  }
+}
