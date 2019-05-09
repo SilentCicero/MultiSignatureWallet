@@ -1,6 +1,19 @@
 ## MultiSignatureWallet (311 bytes)
 
-The smallest known (311 byte) EIP712 compliant MultiSignatureWallet for the Ethereum Virutal Machine.
+The smallest known EIP712 compliant MultiSignatureWallet for the Ethereum Virutal Machine.
+
+## Features:
+
+- Tiny deployment cost (311 Bytes / 233 opcodes)
+- Smallest known multi-signature wallet that is EIP712 compliant
+- Close-To-The-Metal: Easily auditable at the opcode level (easier for formal-verification)
+- Reduced execution cost (when executing transactions)
+- Written with similar security profile to common multi-signature designs
+- Standard Numerical Nonce system to prevent double-spends
+- EIP712 Signing Compliant (signing works with all major Ethereum wallets)
+- Delegate-Call Enabled
+- Specify unfixed amount of signatories and thresholds
+- MIT License; completely open source to do with as you please
 
 ## Design
 
@@ -14,7 +27,7 @@ Our design accomplishes a similar security profile to Christians simple-multi-si
 While this was designed on Yul (an experimental language), the instruction complexity compiled, allows us to better understand
 what is going on under the hood and thus potentially better verify the wallets design integrity.
 
-This wallet has yet to be audited and is experimental.
+***This wallet has yet to be audited and is experimental.***
 
 ## Implementation
 
@@ -27,21 +40,27 @@ Below are stats comparing Christians simple-multi-sig with it's Yul implemented 
 #### Contract Size (bytes):
 
 Christian   2301 bytes
+
 Nick        311 bytes
 
 #### Opcodes Used:
 
 Christian   1926 opcodes
+
 Nick        233 opcodes
 
 #### Deployment Cost (using 2 Signatories):
 
 Christian:
+
  transaction cost 	656197 gas
+
  execution cost 	454473 gas
 
 Nick:
+
  transaction cost 	190592 gas
+
  execution cost 	144616 gas
 
 ## Reference Implimentation (Solidity)
