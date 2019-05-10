@@ -1,6 +1,12 @@
 // MultiSignatureWallet EIP712 Hash Generation Code
 const ethers = require('ethers');
 
+// Transaciton Data
+const destination = String('0xff12adc0B8c870F9f08ec2e5659484d857c746Fa').toLowerCase();
+const gasLimit = '600000';
+const data = '0x';
+const nonce = '0';
+
 // Below is the code for Web3 Wallets / i.e. MetaMask in browser
 const typedData = {
   types: {
@@ -42,10 +48,13 @@ if (typeof window.web3 !== "undefined") {
   }, (err, result) => {
     if (err) return console.error(err);
 
+    /*
     const recoverAddress = ethers.utils.recoverAddress(RELEASE_HASH, result.result);
 
     console.log('RECOVERED ADDRESS', recoverAddress);
     console.log('Recover Success', signerAddress.toLowerCase() === recoverAddress.toLowerCase());
+    */
+
     console.log('Signature', result.result)
     console.log('Signature Split', ethers.utils.splitSignature(result.result));
   });
