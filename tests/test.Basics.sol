@@ -21,12 +21,41 @@ contract Factory {
       mstore(1256, 0x5b8051935050505b8581019050608a565b505080518401835550858686836104)
       mstore(1288, 0x285161044851f4151560ef578586fd5b5050505050505b000000000000000000) // only 23 bytes -- 9 bytes shifted
 
-      mstore(1311, 0x0000000000000000000000000000000000000000000000000000000000000001) // start where code leaves off
+      mstore(1311, threshold) // start where code leaves off
       mstore(1343, 0x0000000000000000000000000000000000000000000000000000000000000040)
       mstore(1375, 0x0000000000000000000000000000000000000000000000000000000000000001) // 1 arr element
       mstore(1407, signatory)
 
       addr := create(0, 1000, 439)
+      if iszero(extcodesize(addr)) {
+        revert(0, 0)
+      }
+    }
+
+    return addr;
+  }
+
+  function deploy2SignerWallet(uint256 threshold, address signatory1, address signatory2) public returns (address payable addr) {
+    assembly {
+      // Multisig Wallet Code Below
+      mstore(1000, 0x38610137600039600051305560605b60405160200260600181101561002f5780)
+      mstore(1032, 0x518151555b60208101905061000e565b5060f780610040600039806000f350fe)
+      mstore(1064, 0x361560f65760003681610424376104a8516103e87f4a0a6d86122c7bd7083e83)
+      mstore(1096, 0x912c312adabf207e986f1ac10a35dfeb610d28d0b68152600180300180546104)
+      mstore(1128, 0x088181526104c8915085822061046852601987538384537fb0609d81c5f719d8)
+      mstore(1160, 0xa516ae2f25079b20fb63da3e07590e23fbf0028e6745e5f260025260a0852060)
+      mstore(1192, 0x225260428720945086875b305481101560d05761042860608202610488510101)
+      mstore(1224, 0x87815261012c6020816080848e8c610bb8f1508381515411151560c0578a8bfd)
+      mstore(1256, 0x5b8051935050505b8581019050608a565b505080518401835550858686836104)
+      mstore(1288, 0x285161044851f4151560ef578586fd5b5050505050505b000000000000000000) // only 23 bytes -- 9 bytes shifted
+
+      mstore(1311, threshold) // start where code leaves off
+      mstore(1343, 0x0000000000000000000000000000000000000000000000000000000000000060) // 60 end pos
+      mstore(1375, 0x0000000000000000000000000000000000000000000000000000000000000002) // 2 arr element
+      mstore(1407, signatory1)
+      mstore(1439, signatory2)
+
+      addr := create(0, 1000, 471)
       if iszero(extcodesize(addr)) {
         revert(0, 0)
       }
@@ -59,6 +88,7 @@ contract Teller {
     target.call(data);
   }
 }
+
 
 // test interest mechanism
 contract test_Basics {
@@ -252,5 +282,87 @@ contract test_Basics {
 
   function check_b6_invalidMethod_shouldThrow() public {
     wallet.invalidMethod();
+  }
+}
+
+// test interest mechanism
+contract test_Basics_2Signatories {
+  Factory factory = new Factory();
+  MultisigWallet wallet;
+  Recorder recorder = new Recorder();
+  Teller teller = new Teller();
+
+  address signer1;
+  address signer2;
+
+  function check_a1_construction_useAccount2() public {
+    signer2 = msg.sender;
+  }
+
+  function check_a2_construction_useAccount1() public {
+    signer1 = msg.sender;
+    wallet = MultisigWallet(factory.deploy2SignerWallet(2, signer1, signer2));
+    Log.data(address(wallet));
+  }
+
+  function check_a3_canAcceptEther_method_useValue4500() public payable {
+    address payable addr = address(wallet);
+
+    Assert.equal(addr.balance, 0);
+
+    addr.transfer(4500);
+
+    Assert.equal(addr.balance, 4500);
+  }
+
+  bytes recordData = "\x19\x01";
+  bytes data = abi.encodeWithSelector(bytes4(0x7214ae99), address(recorder), recordData);
+  uint256 gasLimit = 600000;
+  uint256 nonce = 0;
+  address destination = address(teller);
+  bytes32 hash;
+
+  function check_a4_buildHash_useAccount1() public {
+    // EIP712 Transaction Hash
+    hash = keccak256(abi.encodePacked(
+      "\x19\x01",
+      bytes32(0xb0609d81c5f719d8a516ae2f25079b20fb63da3e07590e23fbf0028e6745e5f2),
+      keccak256(abi.encode(
+          bytes32(0x4a0a6d86122c7bd7083e83912c312adabf207e986f1ac10a35dfeb610d28d0b6),
+          nonce,
+          destination,
+          gasLimit,
+          keccak256(data)
+      ))
+    ));
+
+    Account.sign(1, hash);
+    Account.sign(2, hash);
+  }
+
+  bytes32[] sig1;
+
+  function check_a5_signature_useAccount1(uint8 s1v, bytes32 s1r, bytes32 s1s, uint8 s2v, bytes32 s2r, bytes32 s2s) public {
+    if (signer1 > signer2) {
+      sig1.push(bytes32(uint256(s2v)));
+      sig1.push(s2r);
+      sig1.push(s2s);
+      sig1.push(bytes32(uint256(s1v)));
+      sig1.push(s1r);
+      sig1.push(s1s);
+    } else {
+      sig1.push(bytes32(uint256(s1v)));
+      sig1.push(s1r);
+      sig1.push(s1s);
+      sig1.push(bytes32(uint256(s2v)));
+      sig1.push(s2r);
+      sig1.push(s2s);
+    }
+
+    Assert.equal(recorder.dataLen(), 0);
+
+    wallet.execute(destination, gasLimit, data, sig1);
+
+    Assert.equal(recorder.dataLen(), 2);
   }
 }
