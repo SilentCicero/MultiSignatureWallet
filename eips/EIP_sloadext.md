@@ -2,7 +2,7 @@ Title: Skinny SLOADEXT
 
 ## Preamble
 
-Presently, Ethereum developers are limited to internal assembly level contract storage reads only via the `sload` opcode Contracts may only read external data by accessing pre-specified getters, which are accessible only through external third-party calls. In this EIP, I introduce a simple but powerful opcode akin to what is already available through the RPC via `eth_getStorageAt` called `sloadext` which allows any contract to read the current state storage of another contract.
+Presently, Ethereum developers are limited to pre-specified contract getters for external storage reads. In this EIP, I introduce a simple but powerful opcode akin to what is already available through the RPC via `eth_getStorageAt` called `sloadext` which allows any contract to read the current state storage of another contract.
 
 ## Specification
 
