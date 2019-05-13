@@ -2,7 +2,7 @@ Title: Opcode SLOADEXT
 
 ## Preamble
 
-Presently, Ethereum developers are limited to pre-specified contract getters for external contract storage reads. In this EIP, I introduce a simple but powerful opcode akin to what is already available through the Ethereum RPC Standard via `eth_getStorageAt` called `sloadext` which allows any contract to read the current state storage of another contract.
+In this EIP, I introduce a simple but powerful opcode akin to what is already available through the Ethereum RPC Standard via `eth_getStorageAt` called `sloadext` which allows any contract to read the current state storage of another contract.
 
 ## Specification
 
