@@ -63,7 +63,7 @@ Nick:
 
  execution cost: 	***144616 gas***
 
-## Reference Implimentation (Solidity)
+## Reference Implementation (Solidity)
 
 Below is a rough design of the Yul implemented version with specific optimizations made. Hashes are pre-computed and tucked into the execution method to avoid expensive storage reads.
 
