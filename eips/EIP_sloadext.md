@@ -33,7 +33,7 @@ Where `address` is the address of the contract to read from, `position` is the p
 
 ## Motivation
 
-*Generally* it would reduce the cost of for L1 deployments and executions that are highly gas-sensitive which require `getters` across the board such as proxy contracts, L2 contracts such as plasma chains and state-channels and generic use multi-signature wallets.
+*Generally* it would reduce the cost of L1 contract deployments and runtime execution of inter-contract storage reads (commonly specified as `public` `getters`) that are highly gas-sensitive across the board, such as: proxy contracts, L2 contracts (i.e. plasma chains and state-channels) and generic use multi-signature wallets.
 
 *Reduced Runtime Gas-Cost*: Reading external contract storage must currently be done through calls using the `getter` design model, which requires the use of at least several opcodes to retrieve external storage data. There are many cases where a single contract would want to perform a precise low-level read of another contracts storage, without having to make tedious `getter` calls (which require both an assembly of the method signature and the use of a low-level `call`).
 
@@ -46,6 +46,8 @@ Where `address` is the address of the contract to read from, `position` is the p
 *Interpreting Storage Post Deployment*: Ethereum contracts can be used in ways we cannot foresee in the future, the case of having a contract deployed to the L1 chain but not being able to build new lean getters in the future would deprive future, potentially more-efficient, smart-contract development in production contracts. While this could be remedied by deploying a new contract and or upgradeable designs, those introduce design complexity which could otherwise be avoided by simply allowing new low-level interpretation of the contracts storage from another new contract.
 
 *Node Implementability*: unlike other opcodes, Etheruem Node Developers have largely already implemented this opcode a reality via `getStorageAt` and would simply have to bring this down to the opcode level.
+
+Completed here is the actual ballpark implimentation of `sloadext` in the Go-Ethereum Client, see: [SLOADEXT Go-Ethereum Pull-Request 19566](https://github.com/ethereum/go-ethereum/pull/19566) -- as you can see, the code is fairly trivial to impliment in the client.
 
 *State-Channel and Plasma Chain Cost Reduction*: state-channel and plasma chain contract design is extremely L1 gas-cost sensitive, if there are cases where getters are to be used for any of these contracts, deployment and runtime cost could be further reduced by pairing both the `proxy` design patterns and `getter` contract design patterns using `sloadext` featured in this EIP.
 
