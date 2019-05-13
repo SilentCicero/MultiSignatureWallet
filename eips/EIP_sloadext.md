@@ -2,7 +2,7 @@ Title: Opcode SLOADEXT
 
 ## Preamble
 
-In this EIP, I introduce a simple but powerful opcode akin to what is already available through the Ethereum RPC Standard via `eth_getStorageAt` called `sloadext` which allows any contract to read the current state storage of another contract.
+Presently, Ethereum developers are limited to reading other contracts storage through the use of calls. In this EIP, I introduce a simple but powerful opcode akin to what is already available through the Ethereum RPC Standard via `eth_getStorageAt` called `sloadext` which allows any contract to read the current state storage of another contract.
 
 ## Specification
 
@@ -33,7 +33,7 @@ Where `address` is the address of the contract to read from, `position` is the p
 
 ## Motivation
 
-*Generally* it would reduce the cost of L1 contract deployments and runtime execution of inter-contract storage reads (commonly specified as `public` `getters`) that are highly gas-sensitive across the board, such as: proxy contracts, L2 contracts (i.e. plasma chains and state-channels) and generic use multi-signature wallets.
+*Generally* it would reduce the cost of L1 contract deployments and runtime execution of inter-contract storage reads (commonly specified as `public` `getters`) across the board.
 
 *Reduced Runtime Gas-Cost*: Reading external contract storage must currently be done through calls using the `getter` design model, which requires the use of at least several opcodes to retrieve external storage data. There are many cases where a single contract would want to perform a precise low-level read of another contracts storage, without having to make tedious `getter` calls (which require both an assembly of the method signature and the use of a low-level `call`).
 
