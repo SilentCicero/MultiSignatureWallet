@@ -2,7 +2,7 @@ Title: Opcode SLOADEXT
 
 ## Preamble
 
-Presently, Ethereum developers are limited to reading other contracts storage through the use of calls. In this EIP, I introduce a simple but powerful opcode akin to what is already available through the Ethereum RPC Standard via `eth_getStorageAt` called `sloadext` which allows any contract to read the current state storage of another contract.
+Presently, Ethereum developers are limited to reading other contracts storage through the use of calls. In this EIP, I introduce a simple but powerful opcode akin to what is already available through the Ethereum RPC Standard via `eth_getStorageAt` called `SLOADEXT` which allows any contract to read the current state storage of another contract.
 
 ## Specification
 
@@ -47,7 +47,7 @@ Where `address` is the address of the contract to read from, `position` is the p
 
 *Node Implementability*: unlike other opcodes, Etheruem Node Developers have largely already implemented this opcode a reality via `getStorageAt` and would simply have to bring this down to the opcode level.
 
-Completed here is the actual ballpark implimentation of `sloadext` in the Go-Ethereum Client, see: [SLOADEXT Go-Ethereum Pull-Request 19566](https://github.com/ethereum/go-ethereum/pull/19566) -- as you can see, the code is fairly trivial to impliment in the client.
+Completed here is the actual ballpark implementation of `sloadext` in the Go-Ethereum Client, see: [SLOADEXT Go-Ethereum Pull-Request 19566](https://github.com/ethereum/go-ethereum/pull/19566) -- as you can see, the code is fairly trivial to implement in the client.
 
 *State-Channel and Plasma Chain Cost Reduction*: state-channel and plasma chain contract design is extremely L1 gas-cost sensitive, if there are cases where getters are to be used for any of these contracts, deployment and runtime cost could be further reduced by pairing both the `proxy` design patterns and `getter` contract design patterns using `sloadext` featured in this EIP.
 
