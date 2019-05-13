@@ -33,7 +33,7 @@ Where `address` is the address of the contract to read from, `position` is the p
 
 ## Motivation
 
-*Generally* it would reduce the cost of for L1 deployments and executions that are highly gas-sensitive across the board.
+*Generally* it would reduce the cost of for L1 deployments and executions that are highly gas-sensitive which require `getters` across the board such as proxy contracts, L2 contracts such as plasma chains and state-channels and generic use multi-signature wallets.
 
 *Reduced Runtime Gas-Cost*: Reading external contract storage must currently be done through calls using the `getter` design model, which requires the use of at least several opcodes to retrieve external storage data. There are many cases where a single contract would want to perform a precise low-level read of another contracts storage, without having to make tedious `getter` calls (which require both an assembly of the method signature and the use of a low-level `call`).
 
