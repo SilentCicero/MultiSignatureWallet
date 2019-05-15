@@ -4,9 +4,9 @@ The smallest known EIP712 compliant MultiSignatureWallet for the Ethereum Viruta
 
 ## Features:
 
+- Close-To-The-Metal: Easily auditable at the opcode level (easier for formal-verification)
 - Tiny deployment cost (311 Bytes / 233 opcodes)
 - Smallest known multi-signature wallet that is EIP712 compliant
-- Close-To-The-Metal: Easily auditable at the opcode level (easier for formal-verification)
 - Reduced execution cost (when executing transactions)
 - Written with similar security profile to common multi-signature designs
 - Standard Numerical Nonce system to prevent double-spends

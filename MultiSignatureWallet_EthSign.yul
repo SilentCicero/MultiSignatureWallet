@@ -1,12 +1,12 @@
 /**
   * @title MultiSignatureWallet
   * @author Nick Dodson <thenickdodson@gmail.com>
-  * @notice 261 byte eth_sign Compliant Delegate-Call Enabled MultiSignature Wallet for the Ethereum Virtual Machine
+  * @notice 264 byte eth_sign Compliant Delegate-Call Enabled MultiSignature Wallet for the Ethereum Virtual Machine
   */
 object "MultiSignatureWallet" {
   code {
     // constructor: uint256(signatures required) + address[] signatories (bytes32 sep|chunks|data...)
-    codecopy(0, 261, codesize()) // setup constructor args: mem positon 0 | code size 280 (before args) | 1000 bytes of address args (30)
+    codecopy(0, 264, codesize()) // setup constructor args: mem positon 0 | code size 280 (before args) | 1000 bytes of address args (30)
     sstore(address(), mload(0)) // map contract address => signatures required
 
     for { let i := 96 } lt(i, add(96, mul(32, mload(64)))) { i := add(i, 32) } { // iterate through signatory addresses
@@ -18,9 +18,14 @@ object "MultiSignatureWallet" {
   }
   object "Runtime" {
     code {
-      if eq(calldatasize(), 0) { log0(0, 0) } // fallback log zero
+        if eq(calldatasize(), 0) {
+          mstore(0, caller()) // load caller
+          mstore(32, callvalue()) // load value
+          log0(0, 64) // log caller / value
+          stop()
+        } // fallback log zero
 
-      if calldatasize() { // call data: bytes4(sig) bytes32(dest) bytes32(gasLimit) bytes(data) bytes32[](signatures) | supports fallback
+        // call data: bytes4(sig) bytes32(dest) bytes32(gasLimit) bytes(data) bytes32[](signatures) | supports fallback
         calldatacopy(160, 0, calldatasize()) // copy calldata to memory
 
         let dataSize := mload(292)
@@ -51,7 +56,6 @@ object "MultiSignatureWallet" {
         sstore(add(address(), 1), add(1, mload(132))) // increase nonce: nonce = nonce + 1
 
         if iszero(delegatecall(mload(196), mload(164), 324, dataSize, 0, 0)) { revert (0, 0) }
-      }
     }
   }
 }
