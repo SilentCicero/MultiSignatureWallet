@@ -6,7 +6,6 @@ The smallest known EIP712 compliant MultiSignatureWallet for the Ethereum Viruta
 
 - Close-To-The-Metal: Easily auditable at the opcode level (easier for formal-verification)
 - Tiny deployment cost (311 Bytes / 233 opcodes)
-- Smallest known multi-signature wallet that is EIP712 compliant
 - Reduced execution cost (when executing transactions)
 - Written with similar security profile to common multi-signature designs
 - Standard Numerical Nonce system to prevent double-spends
@@ -32,6 +31,8 @@ what is going on under the hood and thus potentially better verify the wallets d
 ## Implementation
 
 The final wallet code can be found in the `MultiSignatureWallet.yul` file.
+
+View it now by copying the Yul code into (Yulit in your browser)[https://yulit.surge.sh] !
 
 ## Stats
 
