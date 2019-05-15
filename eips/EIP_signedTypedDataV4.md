@@ -2,23 +2,7 @@ Title: Skinny Signed Typed Data V4
 
 ## Motivation
 
-The existing versions of `eth_sign`, and those specified in EIP712 are either incredibly awkward to implement and are computationally inefficient and expensive to validate on-chain, making them a poor fit for highly gas-sensitive transactions which require some typed signature data (such as meta-transactions or everyday multi-signature wallet transactions). In this EIP, I will introduce a lean, incredibly flexible, computationally efficient signing scheme for Ethereum typed signature production.
-
-The design of the schema should also verifiably inform the Wallet of additional descriptive details about the data being signed.
-
-The data being signed must be recursively descriptive, as many transactions often leverage 1 or many forms of encoded sub-transaction data, however, this descriptiveness should be a cost we burden developers with on-chain -- in particular I'm mentioning the nesting of data which costs a significant amount of memory and computation cost on-chain for no additional cryptographic benefit.
-
-Considering most data being signed on-chain is transactional in-nature and often times encoded as arguments for transactions, we will try to keep existing transactional encoding structure as much as possible.
-
-We want to be able to securely describe data, but not burden the chain with it's description or complicated hashing scheme, and thus we want to be able to pre-specify any domain-like data and potentially descriptive schematic data in a single prefix domain-hash, but leaving the data in question untouched and leanly encoded as it would come in on a call for example.
-
-We should let developers design their internal signing structures, and not force per-maturely signing schemes which are impractical for many engineering use-cases.
-
-On-chain hash building should be light, and leverage existing chain features such as the uniqueness of contract addresses as forms of replay attack prevention.
-
-The domain hash should be able to be completely computed outside contract deployment, thus reduces both initialization and runtime cost.
-
-The encoding scheme should be simple enough that no complex libraries will need to be used to encode it.
+The existing versions of typed signing specified in EIP712 are either incredibly awkward to implement and is computationally inefficient to validate on-chain, making them a poor fit for highly gas-sensitive transactions which require some typed signature data (such as meta-transactions or everyday multi-signature wallet transactions). In this EIP, I will introduce a lean, incredibly flexible, computationally efficient signing scheme for Ethereum typed signature production.
 
 ## Principles
 

@@ -1,7 +1,7 @@
 /**
   * @title MultiSignatureWallet
   * @author Nick Dodson <thenickdodson@gmail.com>
-  * @notice 264 byte eth_sign Compliant Delegate-Call Enabled MultiSignature Wallet for the Ethereum Virtual Machine
+  * @notice 264 byte Weighted eth_sign Compliant Delegate-Call Enabled MultiSignature Wallet for the Ethereum Virtual Machine
   */
 object "MultiSignatureWallet" {
   code {
