@@ -32,7 +32,7 @@ what is going on under the hood and thus potentially better verify the wallets d
 
 The final wallet code can be found in the `MultiSignatureWallet.yul` file.
 
-View it now by copying the Yul code into (Yulit in your browser)[https://yulit.surge.sh] !
+View it now by copying the Yul code into [Yulit in your browser](https://yulit.surge.sh) !
 
 ## Stats
 
