@@ -8,6 +8,7 @@
   },
   "scripts": {
     "example": "parcel scripts/index.html",
+    "build:example": "parcel build scripts/index.html",
     "test": "testeth ./tests/"
   },
   "repository": {

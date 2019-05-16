@@ -88,7 +88,11 @@ assembly {
 ```js
 contract Recover {
  function recover(...) {
-   bytes32 hash = keccak256(abi.encodePacked(bytes2(1901), bytes20(0x10040600039806000f350fe6000361515600b578), address(this), ...);
+   bytes32 hash = keccak256(abi.encodePacked(
+     bytes2(1901), // prefix
+     bytes20(0x10040600039806000f350fe6000361515600b578), // domain seperator
+     address(this), // address as nonce
+     ...);
  }
 }
 ```

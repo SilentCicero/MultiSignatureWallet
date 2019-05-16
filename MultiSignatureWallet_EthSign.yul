@@ -55,7 +55,7 @@ object "MultiSignatureWallet" {
 
         sstore(add(address(), 1), add(1, mload(132))) // increase nonce: nonce = nonce + 1
 
-        if iszero(delegatecall(mload(196), mload(164), 324, dataSize, 0, 0)) { revert (0, 0) }
+        if iszero(delegatecall(mload(196), mload(164), 324, dataSize, 0, 0)) { revert(0, 0) }
     }
   }
 }
