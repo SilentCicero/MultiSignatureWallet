@@ -1,17 +1,20 @@
 /**
   * @title MultiSignatureWallet
   * @author Nick Dodson <thenickdodson@gmail.com>
-  * @notice 313 byte Weighted EIP712 Signing Compliant Delegate-Call Enabled MultiSignature Wallet for the Ethereum Virtual Machine
+  * @notice 311 byte Weighted EIP712 Signing Compliant Delegate-Call Enabled MultiSignature Wallet for the Ethereum Virtual Machine
   */
 object "MultiSignatureWallet" {
   code {
     // constructor: uint256(signatures required) + address[] signatories (bytes32 sep|chunks|data...)
-    codecopy(0, 313, codesize()) // setup constructor args: mem positon 0 | code size 280 (before args)
-    sstore(address(), mload(0)) // map contract address => signatures required
+    codecopy(0, 311, codesize()) // setup constructor args: mem positon 0 | code size 280 (before args)
 
     for { let i := 96 } lt(i, add(96, mul(32, mload(64)))) { i := add(i, 32) } { // iterate through signatory addresses
-        sstore(mload(i), 1) // map signer address => signer address
+        if gt(0, mload(i)) { // protection against zero value writes
+            sstore(mload(i), 1)
+        }
     }
+
+    sstore(address(), mload(0)) // map contract address => signatures required (moved ahead of user initiated address => weight setting)
 
     datacopy(0, dataoffset("Runtime"), datasize("Runtime")) // now switch over to runtime code from constructor
     return(0, datasize("Runtime"))
@@ -50,7 +53,7 @@ object "MultiSignatureWallet" {
             let ecrecoverResult := call(3000, 1, 0, signatureMemoryPosition, 128, 96, 32) // call ecrecover precompile with ecrecover(hash,v,r,s) | failing is okay here
             let recoveredAddress := mload(96)
 
-            if or(eq(caller(), recoveredAddress), eq(0, gt(recoveredAddress, previousAddress))) { revert(0, 0) } // sload(current address) > prev address OR revert
+            if or(eq(caller(), recoveredAddress), iszero(gt(recoveredAddress, previousAddress))) { revert(0, 0) } // sload(current address) > prev address OR revert
 
             previousAddress := recoveredAddress // set previous address for future comparison
             signatureMemoryPosition := add(signatureMemoryPosition, 96)
