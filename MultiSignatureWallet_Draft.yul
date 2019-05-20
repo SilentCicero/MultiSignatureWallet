@@ -1,17 +1,15 @@
 /**
   * @title MultiSignatureWallet
   * @author Nick Dodson <thenickdodson@gmail.com>
-  * @notice 311 byte Weighted EIP712 Signing Compliant Delegate-Call Enabled MultiSignature Wallet for the Ethereum Virtual Machine
+  * @notice 306 byte Weighted EIP712 Signing Compliant Delegate-Call Enabled MultiSignature Wallet for the Ethereum Virtual Machine
   */
 object "MultiSignatureWallet" {
   code {
     // constructor: uint256(signatures required) + address[] signatories (bytes32 sep|chunks|data...)
-    codecopy(0, 311, codesize()) // setup constructor args: mem positon 0 | code size 280 (before args)
+    codecopy(0, 306, codesize()) // setup constructor args: mem positon 0 | code size 280 (before args)
 
-    for { let i := 96 } lt(i, add(96, mul(32, mload(64)))) { i := add(i, 32) } { // iterate through signatory addresses
-        if gt(0, mload(i)) { // protection against zero value writes
-            sstore(mload(i), 1)
-        }
+    for { let i := 96 } gt(mload(i), 0) { i := add(i, 32) } { // iterate through signatory addresses
+        sstore(mload(i), 1) // address => 1 (weight map
     }
 
     sstore(address(), mload(0)) // map contract address => signatures required (moved ahead of user initiated address => weight setting)
@@ -102,5 +100,5 @@ Runtime Memory Layout
 288     | Hash of Data           | keccak256(of data)
 320     | End of Bytes Data      | End of bytes data (specified in calldata)
 352     | Data size              | bytes data raw size (specified in calldata)
-384     | Actual Bytes Data      | raw bytes data (specified in calldata)
+384     | Bytes Data             | raw bytes data (specified in calldata)
 */
