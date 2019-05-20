@@ -1,13 +1,13 @@
 /**
   * @title MultiSignatureWallet
   * @author Nick Dodson <thenickdodson@gmail.com>
-  * @notice 317 byte Weighted EIP712 Signing Compliant Delegate-Call Enabled MultiSignature Wallet for the Ethereum Virtual Machine
+  * @notice 313 byte Weighted EIP712 Signing Compliant Delegate-Call Enabled MultiSignature Wallet for the Ethereum Virtual Machine
   */
 object "MultiSignatureWallet" {
   code {
     // constructor: uint256(signatures required) + address[] signatories (bytes32 sep|chunks|data...)
-    codecopy(0, 317, codesize()) // setup constructor args: mem positon 0 | code size 280 (before args)
-    sstore(1, mload(0)) // map contract address => signatures required
+    codecopy(0, 313, codesize()) // setup constructor args: mem positon 0 | code size 280 (before args)
+    sstore(address(), mload(0)) // map contract address => signatures required
 
     for { let i := 96 } lt(i, add(96, mul(32, mload(64)))) { i := add(i, 32) } { // iterate through signatory addresses
         sstore(mload(i), 1) // map signer address => signer address
@@ -28,7 +28,7 @@ object "MultiSignatureWallet" {
         calldatacopy(220, 0, calldatasize()) // copy calldata to memory
 
         let dataSize := mload(352) // size of the bytes data
-        let nonce := sload(2)
+        let nonce := sload(0)
 
         // build EIP712 release hash
         mstore(128, 0x6310997d8ae730b875ec1971d9c8ed1643e462fee32f01134f9275a5370b69d2) // EIP712 Execute TypeHash: Execute(address verifyingContract,uint256 nonce,address destination,uint256 gasLimit,bytes data)
@@ -44,7 +44,7 @@ object "MultiSignatureWallet" {
         let signatureMemoryPosition := add(224, mload(320)) // new memory position -32 bytes from sig start
         let previousAddress := 0 // comparison variable, used to check for duplicate signer accounts
 
-        for { let i := sload(caller()) } lt(i, sload(1)) { } { // signature validation: loop through signatures (i < required signatures)
+        for { let i := sload(caller()) } lt(i, sload(address())) { } { // signature validation: loop through signatures (i < required signatures)
             mstore(signatureMemoryPosition, eip712Hash) // place hash before each sig in memory: hash + v + r + s | hash + vN + rN + sN
 
             let ecrecoverResult := call(3000, 1, 0, signatureMemoryPosition, 128, 96, 32) // call ecrecover precompile with ecrecover(hash,v,r,s) | failing is okay here
@@ -57,7 +57,7 @@ object "MultiSignatureWallet" {
             i := add(i, sload(recoveredAddress))
         }
 
-        sstore(2, add(1, nonce)) // increase nonce: nonce = nonce + 1
+        sstore(0, add(1, nonce)) // increase nonce: nonce = nonce + 1
 
         if iszero(delegatecall(mload(256), mload(224), 384, dataSize, 0, 0)) { revert(0, 0) }
     }
@@ -69,9 +69,8 @@ object "MultiSignatureWallet" {
 Contract Storage Layout
 ==============================
 
-0            | left empty
-1            | Weighted Signatory Threshold
-2            | Nonce
+0            | Nonce
+address      | Required Signatures
 [signatory address] => signatory weight
 
 ==============================
