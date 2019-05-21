@@ -19,3 +19,8 @@ eth.raw('eth_getStorageAt', walletAddress, utils.hexlify(utils.padZeros(walletAd
 eth.raw('eth_getStorageAt', walletAddress, utils.hexlify(utils.padZeros(signerAddress, 32)), 'latest')
 .then(console.log)
 .catch(console.log);
+
+// Check Nonce of Wallet
+eth.raw('eth_getStorageAt', walletAddress, utils.hexlify(utils.padZeros('0x0', 32)), 'latest')
+.then(console.log)
+.catch(console.log);
