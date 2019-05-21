@@ -1,35 +1,47 @@
-pragma solidity >0.4.99 <0.6.0;
+pragma solidity 0.5.1^;
 
 contract MultiSignatureWalletHelpers {
-    function changeRequiredSignatures(uint256 requiredSignatures) public {
+    function changeRequiredSignatures(uint256 requiredSignatures) external {
         assembly {
+            sstore(1, requiredSignatures) // change number of required signatures
+        }
+    }
+
+    function addSignatory(address signatory) external {
+        assembly {
+            switch iszero(gt(signatory, 1)) // ensure signatory is not reserved slots
+            case 1 { revert(0, 0) }
+
+            sstore(signatory, 1)
+        }
+    }
+
+    function addSignatory(uint256 requiredSignatures, address signatory) external {
+        assembly {
+            switch iszero(gt(signatory, 1)) // ensure signatory is not reserved slots
+            case 1 { revert(0, 0) }
+
             sstore(address, requiredSignatures)
+            sstore(signatory, 1)
         }
     }
 
-    function addSignatory(bytes32 signatory) public {
+    function removeSignatory(address signatory) external {
         assembly {
-            sstore(signatory, signatory)
+            switch iszero(gt(signatory, 1)) // ensure signatory is not reserved slots
+            case 1 { revert(0, 0) }
+
+            sstore(signatory, 0) // set signatory weight to zero
         }
     }
 
-    function addSignatory(uint256 requiredSignatures, bytes32 signatory) public {
+    function removeSignatory(uint256 requiredSignatures, address signatory) external {
         assembly {
-            sstore(address, requiredSignatures)
-            sstore(signatory, signatory)
-        }
-    }
+            switch iszero(gt(signatory, 1)) // ensure signatory is not reserved slots
+            case 1 { revert(0, 0) }
 
-    function removeSignatory(bytes32 signatory) public {
-        assembly {
-            sstore(signatory, 0)
-        }
-    }
-
-    function removeSignatory(uint256 requiredSignatures, bytes32 signatory) public {
-        assembly {
-            sstore(address, requiredSignatures)
-            sstore(signatory, 0)
+            sstore(1, requiredSignatures) // change required signatures
+            sstore(signatory, 0) // set signatory weight to zero
         }
     }
 }
