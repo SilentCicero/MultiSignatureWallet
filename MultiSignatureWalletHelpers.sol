@@ -1,4 +1,4 @@
-pragma solidity 0.5.1^;
+pragma solidity ^0.5.1;
 
 contract MultiSignatureWalletHelpers {
     function changeRequiredSignatures(uint256 requiredSignatures) external {
@@ -7,31 +7,22 @@ contract MultiSignatureWalletHelpers {
         }
     }
 
-    function addSignatory(address signatory) external {
+    function addSignatory(uint256 requiredSignatures, address signatory, uint256 weight) external {
         assembly {
             switch iszero(gt(signatory, 1)) // ensure signatory is not reserved slots
             case 1 { revert(0, 0) }
 
-            sstore(signatory, 1)
+            sstore(1, requiredSignatures)
+            sstore(signatory, weight)
         }
     }
 
-    function addSignatory(uint256 requiredSignatures, address signatory) external {
+    function changeSignatoryWeight(address signatory, uint256 weight) external {
         assembly {
             switch iszero(gt(signatory, 1)) // ensure signatory is not reserved slots
             case 1 { revert(0, 0) }
 
-            sstore(address, requiredSignatures)
-            sstore(signatory, 1)
-        }
-    }
-
-    function removeSignatory(address signatory) external {
-        assembly {
-            switch iszero(gt(signatory, 1)) // ensure signatory is not reserved slots
-            case 1 { revert(0, 0) }
-
-            sstore(signatory, 0) // set signatory weight to zero
+            sstore(signatory, weight)
         }
     }
 
