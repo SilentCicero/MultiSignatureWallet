@@ -10,7 +10,7 @@ object "MultiSignatureWallet" {
     sstore(address(), mload(0)) // map contract address => signatures required
 
     for { let i := 96 } lt(i, add(96, mul(32, mload(64)))) { i := add(i, 32) } { // iterate through signatory addresses
-       sstore(mload(i), mload(i)) // map signer address => signer address
+       sstore(mload(i), 1) // map signer address => signer address
     }
 
     datacopy(0, dataoffset("Runtime"), datasize("Runtime")) // now switch over to runtime code from constructor
@@ -36,16 +36,18 @@ object "MultiSignatureWallet" {
         let EIP712Hash := keccak256(0, 66) // EIP712 final signing hash
         let previousAddress := 0 // comparison variable, used to check for duplicate signer accounts
 
-        for { let i := 0 } lt(i, sload(address())) { i := add(i, 1) } { // signature validation: loop through signatures (i < required signatures)
+        for { let i := 0 } lt(i, sload(address())) { } { // signature validation: loop through signatures (i < required signatures)
             let memPosition := add(add(1064, mload(1160)), mul(i, 96)) // new memory position -32 bytes from sig start
 
             mstore(memPosition, EIP712Hash) // place hash before each sig in memory: hash + v + r + s | hash + vN + rN + sN
 
             let result := call(3000, 1, 0, memPosition, 128, 300, 32) // call ecrecover precompile with ecrecover(hash,v,r,s) | failing is okay here
 
-            if iszero(gt(sload(mload(300)), previousAddress)) { revert(0, 0) } // sload(current address) > prev address OR revert
+            let addr := mload(300)
+            if iszero(gt(addr, previousAddress)) { revert(0, 0) } // sload(current address) > prev address OR revert
+            i := add(i, sload(addr))
 
-            previousAddress := mload(300) // set previous address for future comparison
+            previousAddress := addr // set previous address for future comparison
         }
 
         sstore(add(address(), 1), add(1, mload(1032))) // increase nonce: nonce = nonce + 1
